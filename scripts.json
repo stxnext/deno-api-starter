@@ -1,0 +1,19 @@
+{
+  "$schema": "https://deno.land/x/denon@2.4.9/schema.json",
+  "importmap": "import_map.json",
+  "watch": false,
+  "scripts": {
+    "docker:build-image": {
+      "cmd": "bash ./scripts/build-docker-image-local.sh",
+      "desc": "Build docker images"
+    },
+    "docker:watch": {
+      "cmd": "docker-compose up watch",
+      "desc": "Start api in watch mode"
+    },
+    "docker:start": {
+      "cmd": "docker-compose up api",
+      "desc": "Start api"
+    }
+  }
+}

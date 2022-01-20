@@ -1,14 +1,14 @@
 version: "3.1"
 
-services: 
-  watch: 
+services:
+  watch:
     image: api:local
     hostname: api
-    volumes: 
+    volumes:
       - ./src:/app/src:ro
       - ./import_map.json:/app/import_map.json:ro
       - ./deps_lock.json:/app/deps_lock.json:ro
-    ports: 
+    ports:
       - 1337:1337
     command: "run --watch -A --importmap import_map.json ./src/index.ts"
     depends_on:
@@ -17,11 +17,11 @@ services:
   # api:
   #   image: api:local
   #   hostname: api
-  #   volumes: 
+  #   volumes:
   #     - ./src:/app/src:ro
   #     - ./import_map.json:/app/import_map.json:ro
   #     - ./deps_lock.json:/app/deps_lock.json:ro
-  #   ports: 
+  #   ports:
   #     - 1337:1337
   #   command: "run -A --importmap import_map.json ./src/index.ts"
   #   depends_on:
@@ -36,6 +36,7 @@ services:
       - POSTGRES_USER=postgres
     volumes:
       - db:/var/lib/postgresql/data
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   adminer:
     hostname: adminer

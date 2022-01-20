@@ -1,3 +1,4 @@
+import "https://deno.land/x/dotenv@v3.1.0/load.ts";
 import { Application } from "oak";
 import { userRouter } from "./domain/user/user.router.ts";
 import { databaseMiddleware } from "./shared/middlewares/database.middleware.ts";
@@ -17,8 +18,8 @@ const database = new Database({
     hostname: Deno.env.get("POSTGRES_HOSTNAME"),
     password: Deno.env.get("POSTGRES_PASSWORD"),
     port: 5432,
-  }, 
-  poolSize: Number(Deno.env.get("POSTGRES_POOL_SIZE")), 
+  },
+  poolSize: Number(Deno.env.get("POSTGRES_POOL_SIZE")),
   lazyConnections: true
 });
 

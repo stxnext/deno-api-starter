@@ -8,13 +8,14 @@ import { Transaction } from 'postgres';
 import { UserModel } from '../models/user.model.ts';
 import { CreateUserRequest } from '../types/create-user.request.ts';
 import { UserExistsError } from "../errors/user-exists.error.ts";
+import { DeleteUserRequest } from "../types/delete-user.request.ts";
+import { DeleteUserResponse } from "../types/delete-user.response.ts";
 
 export class UserService {
-  constructor(private transaction: Transaction) {}
+  constructor(private transaction: Transaction) { }
 
   async createUser(payload: CreateUserRequest): Promise<UserModel> {
     try {
-      console.log(await this.transaction.name);
       await this.transaction.begin();
       await this.transaction.queryObject(`INSERT INTO users (username, email) VALUES ($1, $2)`, payload.userName, payload.email);
       const id = (
@@ -36,6 +37,18 @@ export class UserService {
       return users.rows;
     } catch (error) {
       throw new Error(error);
+    }
+  }
+
+  async deleteUser(payload: DeleteUserRequest): Promise<DeleteUserResponse> {
+    try {
+      await this.transaction.begin();
+      await this.transaction.queryObject(`DELETE FROM users WHERE id = ${payload.id}`);
+      await this.transaction.commit();
+      return { status: 'ok', message: "User deleted succesfuly" };
+    } catch (error) {
+      console.log(error)
+      throw new UserExistsError();
     }
   }
 }

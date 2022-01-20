@@ -1,5 +1,6 @@
 import { RouteParams, Router } from "oak";
 import { CreateUserController } from "./controllers/create-user.controller.ts";
+import { GetUsersController } from "./controllers/get-users.controller.ts";
 import { userErrorHandler } from "./utils/user.error-handler.ts";
 import { AppState } from "../../types/state.ts";
 
@@ -12,4 +13,5 @@ userRouter
     return next();
   })
   .use(userErrorHandler)
+  .get("/users", new GetUsersController().handle)
   .post("/user", new CreateUserController().handle)

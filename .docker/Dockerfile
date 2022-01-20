@@ -15,7 +15,9 @@ COPY deps_lock.json .
 
 # These steps will be re-run upon each file change in your working directory:
 ADD ./src ./src
+
+COPY .env.example .env
 # Compile the main app so that it doesn't need to be compiled each startup/entry.
 RUN deno cache --lock=deps_lock.json --import-map=import_map.json ./src/index.ts
 
-CMD ["run", "--allow-net", "./src/index.ts"]
+CMD ["run", "--allow-net", "--allow-env", "./src/index.ts"]

@@ -7,7 +7,7 @@ import { UserService } from '../services/user.service.ts'
 export class GetUsersController {
   async handle(context: Context<AppState>) {
     context.state.logger.debug("GetUsersController");
-    const users = await new GetUsersCase(context, new UserService(context.state.databaseTransaction)).execute();
+    const users = await new GetUsersCase(context, new UserService(context.state.databaseClient)).execute();
     context.response.body = JSON.stringify(users);
   }
 }

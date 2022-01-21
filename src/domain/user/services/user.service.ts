@@ -10,19 +10,17 @@ import { CreateUserRequest } from '../types/create-user.request.ts';
 import { UserExistsError } from "../errors/user-exists.error.ts";
 import { DeleteUserRequest } from "../types/delete-user.request.ts";
 import { DeleteUserResponse } from "../types/delete-user.response.ts";
+import { Database } from "denodb";
 
 export class UserService {
-  constructor(private transaction: Transaction) { }
+  constructor(private database: Database) { }
 
   async createUser(payload: CreateUserRequest): Promise<UserModel> {
     try {
-      await this.transaction.begin();
-      await this.transaction.queryObject(`INSERT INTO users (username, email) VALUES ($1, $2)`, payload.userName, payload.email);
-      const id = (
-        await this.transaction.queryObject<{ currval: BigInt }>(`SELECT currval('users_id_seq')`)
-      ).rows[0].currval;
-      await this.transaction.commit();
-      const user = new UserModel({ id: id.toString(), ...payload });
+      const user = await UserModel.create({
+        username: payload.username,
+        email: payload.email
+      });
       return user;
     } catch (error) {
       console.log(error)
@@ -32,9 +30,8 @@ export class UserService {
 
   async getUsers(): Promise<UserModel[]> {
     try {
-      await this.transaction.begin();
-      const users = await this.transaction.queryObject<UserModel>('SELECT * FROM users');
-      return users.rows;
+      const users = await UserModel.all()
+      return users;
     } catch (error) {
       throw new Error(error);
     }
@@ -42,10 +39,8 @@ export class UserService {
 
   async deleteUser(payload: DeleteUserRequest): Promise<DeleteUserResponse> {
     try {
-      await this.transaction.begin();
-      await this.transaction.queryObject(`DELETE FROM users WHERE id = ${payload.id}`);
-      await this.transaction.commit();
-      return { status: 'ok', message: "User deleted succesfuly" };
+      await UserModel.where('id', payload.id).delete();
+      return { status: 'ok', message: "User deleted successfully" };
     } catch (error) {
       console.log(error)
       throw new UserExistsError();

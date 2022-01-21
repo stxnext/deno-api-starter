@@ -1,27 +1,18 @@
-import "https://deno.land/x/dotenv@v3.1.0/load.ts";
+import "dotenv";
 import { Application } from "oak";
 import { userRouter } from "./domain/user/user.router.ts";
 import { databaseMiddleware } from "./shared/middlewares/database.middleware.ts";
 import { loggerMiddleware } from "./shared/middlewares/logger.middleware.ts";
-import { releaseDatabaseMiddleware } from "./shared/middlewares/release-database.middleware.ts";
 import { requestIdMiddleware } from "./shared/middlewares/request-id.middleware.ts";
-import { Database } from "./shared/utils/database.ts";
+import { DatabaseConnector } from "./shared/utils/database.ts";
+
 import { registerRouters } from "./shared/utils/register-routers.ts";
 import { AppState } from "./types/state.ts";
 
 const app = new Application<AppState>();
 
-const database = new Database({
-  dbOptions: {
-    user: Deno.env.get("POSTGRES_USER"),
-    database: Deno.env.get("POSTGRES_DB"),
-    hostname: Deno.env.get("POSTGRES_HOSTNAME"),
-    password: Deno.env.get("POSTGRES_PASSWORD"),
-    port: 5432,
-  },
-  poolSize: Number(Deno.env.get("POSTGRES_POOL_SIZE")),
-  lazyConnections: true
-});
+const database = new DatabaseConnector().connect()
+
 
 app.use(requestIdMiddleware);
 app.use(loggerMiddleware(Number(Deno.env.get("LOG_LEVEL"))));
@@ -33,8 +24,6 @@ registerRouters({
     userRouter
   ]
 });
-
-app.use(releaseDatabaseMiddleware(database));
 
 app.addEventListener("listen", () => {
   console.log(`Server started at http://localhost:${Deno.env.get("PORT")}`);

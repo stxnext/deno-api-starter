@@ -14,7 +14,7 @@ export class DatabaseConnector {
     return db
   }
 
-  public linkModels(db: Database): Database {
+  private linkModels(db: Database): Database {
     db.link(Models);
     return db
   }

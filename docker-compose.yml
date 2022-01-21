@@ -11,21 +11,26 @@ services:
     ports:
       - 1337:1337
     command: "run --watch -A --importmap import_map.json ./src/index.ts"
+    env_file:
+      - .env
     depends_on:
       - postgres
+      - adminer # its optional, but good for development
 
-  # api:
-  #   image: api:local
-  #   hostname: api
-  #   volumes:
-  #     - ./src:/app/src:ro
-  #     - ./import_map.json:/app/import_map.json:ro
-  #     - ./deps_lock.json:/app/deps_lock.json:ro
-  #   ports:
-  #     - 1337:1337
-  #   command: "run -A --importmap import_map.json ./src/index.ts"
-  #   depends_on:
-  #     - postgres
+  api:
+    image: api:local
+    hostname: api
+    volumes:
+      - ./src:/app/src:ro
+      - ./import_map.json:/app/import_map.json:ro
+      - ./deps_lock.json:/app/deps_lock.json:ro
+    ports:
+      - 1337:1337
+    command: "run -A --importmap import_map.json ./src/index.ts"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
 
   postgres:
     image: postgres:14-alpine
@@ -36,7 +41,6 @@ services:
       - POSTGRES_USER=postgres
     volumes:
       - db:/var/lib/postgresql/data
-      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   adminer:
     hostname: adminer

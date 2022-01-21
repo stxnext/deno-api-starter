@@ -1,4 +1,3 @@
-import "dotenv";
 import { Application } from "oak";
 import { userRouter } from "./domain/user/user.router.ts";
 import { databaseMiddleware } from "./shared/middlewares/database.middleware.ts";
@@ -12,7 +11,6 @@ import { AppState } from "./types/state.ts";
 const app = new Application<AppState>();
 
 const database = new DatabaseConnector().connect()
-
 
 app.use(requestIdMiddleware);
 app.use(loggerMiddleware(Number(Deno.env.get("LOG_LEVEL"))));

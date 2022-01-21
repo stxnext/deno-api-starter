@@ -4,8 +4,6 @@
     "ansi_styles": "https://deno.land/x/ansi_styles@1.0.1/mod.ts",
     "http_status": "https://deno.land/x/http_status@v1.0.1/mod.ts",
     "dex": "https://deno.land/x/dex@1.0.2/mod.ts",
-    "postgres": "https://deno.land/x/postgres@v0.13.0/mod.ts",
-    "dotenv": "https://deno.land/x/dotenv@v3.1.0/load.ts",
     "denodb": "https://deno.land/x/denodb@v1.0.40/mod.ts"
   }
 }

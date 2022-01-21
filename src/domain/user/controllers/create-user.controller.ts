@@ -9,7 +9,7 @@ export class CreateUserController {
   async handle(context: Context<AppState>) {
     context.state.logger.debug("CreateUserController");
     const body = await context.request.body({type: "json"}).value as CreateUserRequest;
-    const user = await new CreateUserCase(context, new UserService(context.state.databaseTransaction)).execute(body);
+    const user = await new CreateUserCase(context, new UserService(context.state.databaseClient)).execute(body);
     context.response.status = 201;
     context.response.body = JSON.stringify(user);
   }

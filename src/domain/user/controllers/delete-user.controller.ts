@@ -9,7 +9,7 @@ export class DeleteUserController {
   async handle(context: Context<AppState>) {
     context.state.logger.debug("DeleteUserController");
     const body = await context.request.body({ type: "json" }).value as DeleteUserRequest;
-    const response = await new DeleteUserCase(context, new UserService(context.state.databaseTransaction)).execute(body);
+    const response = await new DeleteUserCase(context, new UserService(context.state.databaseClient)).execute(body);
     context.response.status = 201;
     context.response.body = JSON.stringify(response);
   }

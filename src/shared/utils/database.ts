@@ -1,36 +1,25 @@
-import { Pool, PoolClient, ClientOptions , Transaction } from "postgres";
+import { Database, PostgresConnector } from "denodb";
+import Models from "../../domain/user/models/index.ts"
 
-interface DatabaseDependencies {
-  dbOptions: ClientOptions;
-  poolSize: number;
-  lazyConnections: boolean;
-}
-
-export class Database {
-  private pool: Pool | undefined;
-  constructor(private readonly dependencies: DatabaseDependencies) {}
-
-  private getPool(): Pool {
-    if(this.pool) return this.pool;
-    const {dbOptions, poolSize, lazyConnections} = this.dependencies;
-    this.pool = new Pool(dbOptions, poolSize, lazyConnections);
-    return this.pool;
+export class DatabaseConnector {
+  public connect(): Database {
+    const connection = new PostgresConnector({
+      host: Deno.env.get("POSTGRES_HOSTNAME") as string,
+      username: Deno.env.get("POSTGRES_USER") as string,
+      password: Deno.env.get("POSTGRES_PASSWORD") as string,
+      database: Deno.env.get("POSTGRES_DB") as string,
+    });
+    const db = new Database(connection);
+    this.linkModels(db)
+    return db
   }
 
-  public getClient(): Promise<PoolClient> {
-    return this.getPool().connect();
+  public linkModels(db: Database): Database {
+    db.link(Models);
+    return db
   }
-
-  public createTransaction(payload: {requestId: string, client: PoolClient}): Transaction {
-    const { requestId, client } = payload;
-    const transaction = client.createTransaction(requestId);
-    transaction.begin();
-    return transaction;
-  }
-
-  public async release(payload: {transaction: Transaction, client: PoolClient}) {
-    const { transaction, client } = payload;
-    await transaction.commit();
-    client.release();
+  public async syncDb(db: Database): Promise<Database> {
+    await db.sync();
+    return db
   }
 }

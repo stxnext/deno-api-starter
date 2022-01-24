@@ -4,7 +4,6 @@
  * Operations on repositories
  * Export methods to other domains
  */
-import { Transaction } from 'postgres';
 import { UserModel } from '../models/user.model.ts';
 import { CreateUserRequest } from '../types/create-user.request.ts';
 import { UserExistsError } from "../errors/user-exists.error.ts";
@@ -42,8 +41,7 @@ export class UserService {
       await UserModel.where('id', payload.id).delete();
       return { status: 'ok', message: "User deleted successfully" };
     } catch (error) {
-      console.log(error)
-      throw new UserExistsError();
+      throw new Error(error);
     }
   }
 }

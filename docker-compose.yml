@@ -6,6 +6,7 @@ services:
     hostname: api
     volumes:
       - ./src:/app/src:ro
+      - ./migrations:/app/migrations:ro
       - ./import_map.json:/app/import_map.json:ro
       - ./deps_lock.json:/app/deps_lock.json:ro
     ports:
@@ -22,6 +23,7 @@ services:
     hostname: api
     volumes:
       - ./src:/app/src:ro
+      - ./migrations:/app/migrations:ro
       - ./import_map.json:/app/import_map.json:ro
       - ./deps_lock.json:/app/deps_lock.json:ro
     ports:
